@@ -1,4 +1,3 @@
-from ast import Try
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -21,7 +20,7 @@ rios: list[Rio] = [
 
 
 @app.get('/rios')
-def list_rios(ordem: str | None = None,
+def list_rios(ordem:str | None = None,
               tipo:str | None = None):
   if tipo == 'permanente':
     rios_filtrados = []
