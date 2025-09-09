@@ -1,14 +1,19 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status, Response, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI()
 
-# Modelos
+# Modelos  ou Schema de API
 class Rio(BaseModel):
   id: int
   nome: str
   extensao: float
   permanente: bool
+
+
+class NovoRio(BaseModel):
+  nome: str
+  extensao: float | None = 0.0
 
 
 rios: list[Rio] = [
@@ -35,9 +40,32 @@ def list_rios(ordem:str | None = None,
 
   return rios
 
-
-@app.get('/rios/{id}')
+# Path Param ou Parametro de Rota/Path
+@app.get('/rios/{id}', status_code=status.HTTP_200_OK)
 def detail_rios(id:int):
-  return f'Detalhes do Rio de ID = {id}'
+  if id % 2 == 0:
+    return f'Detalhes do Rio de ID = {id}'
+  else:
+    # return Response(content='Rio não localizado', 
+    #                 status_code=status.HTTP_404_NOT_FOUND)
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                  detail='Rio não localizado')
+
+
+@app.post('/rios', status_code=status.HTTP_201_CREATED)
+def create_rio(dados: NovoRio):
+  # como criar efetivamente um Rio no BD
+  return dados
+
+
+@app.put('/rios/{id}')
+def update_rio(id:int):
+  # Fake.. ok?!
+  return f'Rio({id}) atualizado com sucesso.'
+
+
+@app.delete('/rios/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_rio(id:int):
+  return
 
 
